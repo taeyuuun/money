@@ -1,11 +1,34 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
+import Cookies from "js-cookie";
 
 function ExpenseTracker() {
   const [place, setPlace] = useState("");
   const [amount, setAmount] = useState("");
   const [history, setHistory] = useState([]);
   const [일일평균, set일일평균] = useState(0);
+
+  useEffect(() => {
+    const savedHistory = Cookies.getJSON("expenseHistory");
+    const savedPlace = Cookies.get("expensePlace");
+    const savedAmount = Cookies.get("expenseAmount");
+
+    if (savedHistory) {
+      setHistory(savedHistory);
+    }
+    if (savedPlace) {
+      setPlace(savedPlace);
+    }
+    if (savedAmount) {
+      setAmount(savedAmount);
+    }
+  }, []);
+
+  useEffect(() => {
+    Cookies.set("expenseHistory", history);
+    Cookies.set("expensePlace", place);
+    Cookies.set("expenseAmount", amount);
+  }, [history, place, amount]);
 
   const handleCalculate = () => {
     const parsedAmount = parseFloat(amount);
@@ -97,6 +120,7 @@ const Wrapper = styled.div`
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 `;
+
 
 const Title = styled.h1`
   font-size: 24px;
